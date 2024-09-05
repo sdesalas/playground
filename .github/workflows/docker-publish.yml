@@ -19,7 +19,9 @@ jobs:
       with:
         go-version: '^1.21.8'
     - name: go test
-      run: go test -v --cover
+      run: |
+        cd simplegorest
+        go test -v --cover
     - name: Log into registry ${{ env.REGISTRY }}
       uses: docker/login-action@v3
       with:

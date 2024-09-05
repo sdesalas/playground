@@ -8,22 +8,25 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
     steps:
     - uses: actions/checkout@v4
+    - uses: actions/setup-go@v5
+      with:
+        go-version: '^1.21.8'
+    - name: go test
+      run: go test -v --cover
     - name: Log into registry ${{ env.REGISTRY }}
       uses: docker/login-action@v3
       with:
         registry: ${{ env.REGISTRY }}
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
-    - name: Build and Push
+    - name: docker build && docker push
       run: |
         FULL_IMAGE=$REGISTRY/$IMAGE_NAME:simplegorest
         cd simplegorest 

@@ -170,6 +170,6 @@ func main() {
 	apiRouter.HandleFunc("/books/{id}", deleteBook).Methods("DELETE")
 
 	// Start server
-	log.Println("Server running on port 8000")
-	log.Fatal(http.ListenAndServe(":8000", router))
+	log.Println("Server running on port 10000")
+	log.Fatal(http.ListenAndServe(":10000", router))
 }

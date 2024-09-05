@@ -1,8 +1,8 @@
 package main
 
 import (
-	"time"
 	"errors"
+	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )

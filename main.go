@@ -1,12 +1,13 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"strings"
 
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 )
 
@@ -23,12 +24,20 @@ type Credentials struct {
 	Password string `json:"password"`
 }
 
-// In-memory data store (for simplicity)
-var books []Book
+var db *sql.DB
 
 // In-memory store for a single user (for simplicity)
 var username = "admin"
 var password = "password"
+
+// Initialize and connect to the SQLite database
+func init() {
+	var err error
+	db, err = initDB()
+	if err != nil {
+		log.Fatalf("Could not initialize database: %v", err)
+	}
+}
 
 // JWT login handler
 func login(w http.ResponseWriter, r *http.Request) {
@@ -87,29 +96,45 @@ func jwtAuthMiddleware(next http.Handler) http.Handler {
 
 // Get all books
 func getBooks(w http.ResponseWriter, r *http.Request) {
+	books, err := getBooksFromDB(db)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(books)
 }
 
 // Get a single book by ID
 func getBook(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r) // Get URL params
-	for _, item := range books {
-		if item.ID == params["id"] {
-			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(item)
-			return
-		}
+	params := mux.Vars(r)
+	book, err := getBookFromDB(db, params["id"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
-	http.Error(w, "Book not found", http.StatusNotFound)
+	if book == nil {
+		http.Error(w, "Book not found", http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(book)
 }
 
 // Create a new book
 func createBook(w http.ResponseWriter, r *http.Request) {
 	var book Book
 	_ = json.NewDecoder(r.Body).Decode(&book)
-	book.ID = fmt.Sprintf("%d", len(books)+1) // Simple ID generation
-	books = append(books, book)
+	book.ID = uuid.New().String() // Generate a new unique ID for the book
+
+	err := createBookInDB(db, book)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(book)
 }
@@ -117,24 +142,19 @@ func createBook(w http.ResponseWriter, r *http.Request) {
 // Delete a book by ID
 func deleteBook(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	for index, item := range books {
-		if item.ID == params["id"] {
-			books = append(books[:index], books[index+1:]...) // Remove the book
-			break
-		}
+	err := deleteBookFromDB(db, params["id"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(books)
-}
 
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"result": "success"})
+}
 
 func main() {
 	// Initialize router
 	router := mux.NewRouter()
-
-	// Sample books
-	books = append(books, Book{ID: "1", Title: "1984", Author: "George Orwell", Year: "1949"})
-	books = append(books, Book{ID: "2", Title: "The Great Gatsby", Author: "F. Scott Fitzgerald", Year: "1925"})
 
 	// Login endpoint to generate JWT token
 	router.HandleFunc("/login", login).Methods("POST")

@@ -1,0 +1,31 @@
+name: SimpleGoRest Build
+
+on:
+  push:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}/simplegorest
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Log into registry ${{ env.REGISTRY }}
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Build and Push
+      env:
+        FULL_IMAGE: $REGISTRY:$IMAGES_NAME:latest
+      run: |
+        cd simplegorest 
+        docker build -t $FULL_IMAGE .
+        docker push $FULL_IMAGE
+

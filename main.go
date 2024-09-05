@@ -144,10 +144,10 @@ func main() {
 	apiRouter.Use(jwtAuthMiddleware)
 
 	// Route handlers & endpoints
-	router.HandleFunc("/api/books", getBooks).Methods("GET")
-	router.HandleFunc("/api/books/{id}", getBook).Methods("GET")
-	router.HandleFunc("/api/books", createBook).Methods("POST")
-	router.HandleFunc("/api/books/{id}", deleteBook).Methods("DELETE")
+	apiRouter.HandleFunc("/books", getBooks).Methods("GET")
+	apiRouter.HandleFunc("/books/{id}", getBook).Methods("GET")
+	apiRouter.HandleFunc("/books", createBook).Methods("POST")
+	apiRouter.HandleFunc("/books/{id}", deleteBook).Methods("DELETE")
 
 	// Start server
 	log.Println("Server running on port 8000")

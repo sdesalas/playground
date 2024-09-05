@@ -22,6 +22,9 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
     - name: Build and Push
+      permissions:
+        contents: read
+        packages: write
       run: |
         FULL_IMAGE=$REGISTRY/$IMAGE_NAME:simplegorest
         cd simplegorest 

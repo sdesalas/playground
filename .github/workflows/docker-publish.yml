@@ -23,7 +23,7 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
     - name: Build and Push
       env:
-        FULL_IMAGE: $REGISTRY:$IMAGES_NAME:latest
+        FULL_IMAGE: $REGISTRY/$IMAGE_NAME:latest
       run: |
         cd simplegorest 
         docker build -t $FULL_IMAGE .

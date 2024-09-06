@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/google/uuid"
@@ -30,6 +31,7 @@ var db *sql.DB
 // In-memory store for a single user (for simplicity)
 var username = "admin"
 var password = "password"
+var jwtKey []byte
 
 // JWT login handler
 func login(w http.ResponseWriter, r *http.Request) {
@@ -47,7 +49,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Generate JWT token
-	tokenString, err := GenerateJWTToken(creds.Username)
+	tokenString, err := GenerateJWTToken(creds.Username, jwtKey)
 	if err != nil {
 		http.Error(w, "Could not generate token", http.StatusInternalServerError)
 		return
@@ -75,7 +77,7 @@ func jwtAuthMiddleware(next http.Handler) http.Handler {
 		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
 
 		// Validate the JWT token
-		_, err := ValidateJWTToken(tokenString)
+		_, err := ValidateJWTToken(tokenString, jwtKey)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusUnauthorized)
 			return
@@ -151,6 +153,8 @@ func main() {
 		// Do nothing
 		// Defaults to system env variables
 	}
+
+	jwtKey = []byte(os.Getenv("JWT_KEY"))
 
 	// Initialize and connect to the SQLite database
 	db, err = initDB()

@@ -149,6 +149,7 @@ func main() {
 	err := godotenv.Load()
 	if err != nil {
 		// Do nothing
+		// Defaults to system env variables
 	}
 
 	// Initialize and connect to the SQLite database

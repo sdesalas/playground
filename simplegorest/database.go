@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	_ "github.com/lib/pq"
 )
@@ -12,9 +13,9 @@ import (
 // Initialize SQLite database connection
 func initDB() (*sql.DB, error) {
 	log.Println("Initializing DB..")
-	connectionstring := os.Getenv("DB_CONNECTIONSTRING")
-	log.Printf("Connecting to %s", connectionstring)
-	db, err := sql.Open("postgres", connectionstring)
+	connStr := os.Getenv("DB_CONNECTIONSTRING")
+	log.Printf("Connecting to %s...", strings.Split(connStr, "@")[0])
+	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		return nil, err
 	}

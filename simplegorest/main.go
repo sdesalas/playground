@@ -145,10 +145,10 @@ func deleteBook(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	// Load .env
+	// Load .env (ignore error)
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		// Do nothing
 	}
 
 	// Initialize and connect to the SQLite database

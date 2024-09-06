@@ -36,4 +36,7 @@ jobs:
         cd simplegorest 
         docker build -t $FULL_IMAGE .
         docker push $FULL_IMAGE
+    - name: deploy
+      run: |
+        curl -D - ${{ secrets.RENDER_WEBHOOK_URL }}
 

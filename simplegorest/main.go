@@ -9,6 +9,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 )
 
 // Simple struct to represent a "book"
@@ -29,15 +30,6 @@ var db *sql.DB
 // In-memory store for a single user (for simplicity)
 var username = "admin"
 var password = "password"
-
-// Initialize and connect to the SQLite database
-func init() {
-	var err error
-	db, err = initDB()
-	if err != nil {
-		log.Fatalf("Could not initialize database: %v", err)
-	}
-}
 
 // JWT login handler
 func login(w http.ResponseWriter, r *http.Request) {
@@ -153,6 +145,18 @@ func deleteBook(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	// Load .env
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	// Initialize and connect to the SQLite database
+	db, err = initDB()
+	if err != nil {
+		log.Fatalf("Could not initialize database: %v", err)
+	}
+
 	// Initialize router
 	router := mux.NewRouter()
 

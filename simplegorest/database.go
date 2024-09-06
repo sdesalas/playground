@@ -4,14 +4,17 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"os"
 
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/lib/pq"
 )
 
 // Initialize SQLite database connection
 func initDB() (*sql.DB, error) {
 	log.Println("Initializing DB..")
-	db, err := sql.Open("sqlite3", "./books.db")
+	connectionstring := os.Getenv("DB_CONNECTIONSTRING")
+	log.Printf("Connecting to %s", connectionstring)
+	db, err := sql.Open("postgres", connectionstring)
 	if err != nil {
 		return nil, err
 	}
@@ -27,6 +30,22 @@ func initDB() (*sql.DB, error) {
 	_, err = db.Exec(createTableQuery)
 	if err != nil {
 		return nil, fmt.Errorf("error creating table: %v", err)
+	}
+
+	rows, err := db.Query("SELECT * FROM books LIMIT 5")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+
+	var id, title, author string
+	var year int
+	for rows.Next() {
+		err := rows.Scan(&id, &title, &author, &year)
+		if err != nil {
+			log.Fatal(err)
+		}
+		log.Printf("id: %s, title: %s, author: %s, year: %d", id, title, author, year)
 	}
 
 	return db, nil

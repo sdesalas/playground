@@ -1,0 +1,19 @@
+{
+  "name": "snowflakedataapp",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning index.js",
+    "start:env": "set -o allexport && source .env && set +o allexport && npm start",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "express": "^5.0.1",
+    "snowflake-sdk": "^1.14.0"
+  }
+}

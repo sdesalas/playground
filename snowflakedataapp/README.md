@@ -10,6 +10,8 @@ Go to Snowflake and create a free account:
 
 https://signup.snowflake.com/
 
+Create a warehouse called `DEFAULT_WH` and a database called `Northwind`. 
+
 Then create a new `.env` file in the root of your repository as follows
 
 ```

@@ -4,8 +4,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node --disable-warning=ExperimentalWarning index.js",
-    "start:env": "set -o allexport && source .env && set +o allexport && npm start",
+    "start": "set -o allexport && source .env && set +o allexport && node --disable-warning=ExperimentalWarning index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

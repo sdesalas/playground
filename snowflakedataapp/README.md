@@ -2,6 +2,8 @@
 
 This is a sample nodejs app using [Snowflake](snowflake.com) that loads the [Northwind database](https://github.com/harryho/db-samples) into a new schema and creates a series of express endpoints per table.
 
+![pic.png](pic.png)
+
 ## Sign up for Snowflake
 
 Go to Snowflake and create a free account:
@@ -201,4 +203,31 @@ SQL> INSERT INTO "Supplier" VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
 SQL> CREATE TABLE IF NOT EXISTS "Territory" ("entityId" INT, "regionId" INT, "territoryCode" VARCHAR, "territorydescription" VARCHAR)
 SQL> INSERT INTO "Territory" VALUES (?,?,?,?)
 Listening on port 3005
+```
+
+## Use the API
+
+You can now query the Northwind database as follows:
+
+```
+GET http://localhost:3005/api/Customer
+
+[
+  {
+    "entityId": 1,
+    "contactName": "Allen, Michael",
+    "contactTitle": "Sales Representative"
+    "country": "Germany",
+    "fax": "030-0123456",
+    "city": "Berlin",
+    "email": null,
+    "phone": "030-3456789",
+    "mobile": null,
+    "region": null,
+    "address": "Obere Str. 0123",
+    "postalCode": "10092",
+    "companyName": "Customer NRZBB",
+  },
+  ... Another 90 contacts
+]
 ```

@@ -21,8 +21,13 @@ Hello
 For building src dir with files
 
 ```
-kotlinc src/**.*.kt -d build
+kotlinc src/**/*.kt -d build
+```
 
+For running with classpath 
+
+```
 kotlin -cp build project003.GuessKt <num>
 ```
+
 

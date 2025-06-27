@@ -27,7 +27,7 @@ kotlinc src/**/*.kt -d build
 For running with classpath 
 
 ```
-kotlin -cp build project003.GuessKt <num>
+kotlin -cp 003-input/build project003.GuessKt <num>
 ```
 
 
